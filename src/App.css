@@ -32,8 +32,9 @@
   }
 }
 
-.card {
-  padding: 2em;
+.accordion {
+  padding: 1em;
+  width: 500px;
 }
 
 .read-the-docs {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { LanguageQuestion } from "./components/LanguageQuestion";
 import { NameQuestion } from "./components/NameQuestion";
@@ -21,7 +21,7 @@ const initialValues: LanguageOptions[] = languages.map((language) => ({
 
 export function DeveloperForm() {
   const [name, setName] = useState("");
-  const [] = useState([]);
+  const [formIsCompleted, setFormIsCompleted] = useState(false);
   const [languageOptions, setSelectedLanguages] =
     useState<LanguageOptions[]>(initialValues);
 
@@ -45,6 +45,16 @@ export function DeveloperForm() {
     setSelectedLanguages(newSelectedLanguages);
   }
 
+  useEffect(() => {
+    const selectedLanguages = languageOptions.filter((lang) => lang.selected);
+    const allLanguagesAreRated = selectedLanguages.every(
+      (lang) => lang.rating > 0
+    );
+    setFormIsCompleted(
+      name.length > 0 && selectedLanguages.length > 0 && allLanguagesAreRated
+    );
+  }, [name, languageOptions]);
+
   return (
     <div>
       <NameQuestion value={name} onChangeValue={setName} />
@@ -56,7 +66,12 @@ export function DeveloperForm() {
         languageOptions={languageOptions}
         onRatingLanguage={handleRatingLanguage}
       />
-      <Button color="success" size="large" variant="contained">
+      <Button
+        color="success"
+        size="large"
+        variant="contained"
+        disabled={!formIsCompleted}
+      >
         Enviar
       </Button>
     </div>

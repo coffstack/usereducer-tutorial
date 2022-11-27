@@ -47,7 +47,6 @@ export function DeveloperForm() {
 
   useEffect(() => {
     const selectedLanguages = languageOptions.filter((lang) => lang.selected);
-    console.log({ selectedLanguages });
     const allLanguagesAreRated = selectedLanguages.every(
       (lang) => lang.rating > 0
     );

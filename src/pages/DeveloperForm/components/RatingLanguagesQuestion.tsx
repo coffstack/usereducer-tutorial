@@ -27,6 +27,7 @@ export function RatingLanguagesQuestion({
           }}
         >
           <Rating
+            value={op.rating}
             onChange={(e, value) => onRatingLanguage(op.language.value, value)}
           />
           <Typography>{op.language.name}</Typography>

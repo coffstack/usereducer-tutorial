@@ -28,7 +28,7 @@ export function DeveloperForm() {
   function handleSelectedLanguage(langValue: string) {
     const newSelectedLanguages = languageOptions.map((langOp) => {
       if (langOp.language.value === langValue) {
-        return { ...langOp, selected: !langOp.selected };
+        return { ...langOp, selected: !langOp.selected, rating: 0 };
       }
       return langOp;
     });
@@ -47,6 +47,7 @@ export function DeveloperForm() {
 
   useEffect(() => {
     const selectedLanguages = languageOptions.filter((lang) => lang.selected);
+    console.log({ selectedLanguages });
     const allLanguagesAreRated = selectedLanguages.every(
       (lang) => lang.rating > 0
     );

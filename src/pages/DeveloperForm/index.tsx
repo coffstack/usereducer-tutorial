@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import Button from "@mui/material/Button";
 import { LanguageQuestion } from "./components/LanguageQuestion";
 import { NameQuestion } from "./components/NameQuestion";
 import { RatingLanguagesQuestion } from "./components/RatingLanguagesQuestion";
 import { Language, LanguageOptions } from "./types";
+import { ActionTypes, developerFormReducer } from "./reducer";
 
 const languages: Language[] = [
   { name: "JavaScript", value: "javascript" },
@@ -20,57 +21,44 @@ const initialValues: LanguageOptions[] = languages.map((language) => ({
 }));
 
 export function DeveloperForm() {
-  const [name, setName] = useState("");
-  const [formIsCompleted, setFormIsCompleted] = useState(false);
-  const [languageOptions, setSelectedLanguages] =
-    useState<LanguageOptions[]>(initialValues);
+  const [state, dispatch] = useReducer(developerFormReducer, {
+    name: "",
+    languageOptions: initialValues,
+    formIsCompleted: false,
+  });
 
   function handleSelectedLanguage(langValue: string) {
-    const newSelectedLanguages = languageOptions.map((langOp) => {
-      if (langOp.language.value === langValue) {
-        return { ...langOp, selected: !langOp.selected, rating: 0 };
-      }
-      return langOp;
-    });
-    setSelectedLanguages(newSelectedLanguages);
+    dispatch({ type: ActionTypes.SELECT_LANGUAGE, payload: langValue });
   }
 
   function handleRatingLanguage(langValue: string, rating: number | null) {
-    const newSelectedLanguages = languageOptions.map((langOp) => {
-      if (langOp.language.value === langValue) {
-        return { ...langOp, rating: rating || 0 };
-      }
-      return langOp;
+    dispatch({
+      type: ActionTypes.RATE_LANGUAGE,
+      payload: { langValue, rating },
     });
-    setSelectedLanguages(newSelectedLanguages);
   }
-
-  useEffect(() => {
-    const selectedLanguages = languageOptions.filter((lang) => lang.selected);
-    const allLanguagesAreRated = selectedLanguages.every(
-      (lang) => lang.rating > 0
-    );
-    setFormIsCompleted(
-      name.length > 0 && selectedLanguages.length > 0 && allLanguagesAreRated
-    );
-  }, [name, languageOptions]);
 
   return (
     <div>
-      <NameQuestion value={name} onChangeValue={setName} />
+      <NameQuestion
+        value={state.name}
+        onChangeValue={(valeu) =>
+          dispatch({ type: ActionTypes.UPDATE_NAME, payload: valeu })
+        }
+      />
       <LanguageQuestion
-        languageOptions={languageOptions}
+        languageOptions={state.languageOptions}
         onSelectedLanguage={handleSelectedLanguage}
       />
       <RatingLanguagesQuestion
-        languageOptions={languageOptions}
+        languageOptions={state.languageOptions}
         onRatingLanguage={handleRatingLanguage}
       />
       <Button
         color="success"
         size="large"
         variant="contained"
-        disabled={!formIsCompleted}
+        disabled={!state.formIsCompleted}
       >
         Enviar
       </Button>
